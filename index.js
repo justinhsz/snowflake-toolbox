@@ -1,2 +1,2 @@
-let { snowflake } = require("src/snowflake");
-module.exports = snowflake;
+const Snowflake = require("./src/snowflake");
+module.exports = Snowflake;
