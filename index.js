@@ -1,2 +1,2 @@
-const Snowflake = require("./src/snowflake");
+import Snowflake from './src/snowflake';
 module.exports = Snowflake;

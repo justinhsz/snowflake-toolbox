@@ -1,6 +1,6 @@
-const ResultSet = require("./resultset");
-const util = require("snowflake-sdk/lib/util");
-const Column = require("snowflake-sdk/lib/connection/result/column");
+import ResultSet from './resultset';
+import util from 'snowflake-sdk/lib/util';
+import Column from 'snowflake-sdk/lib/connection/result/column';
 
 class Statement {
 
@@ -106,15 +106,32 @@ class Statement {
      * @param {String|Number} col
      *
      * @return {String} The JavaScript data type of the column.
+     *
      */
-    getColumnType(col) { // input: string or number => dataType
-        //TODO: Implement javascript type mapping
+    getColumnType(col) {
+        let sqlType = this.getColumnSqlType(col).toUpperCase();
+        if (sqlType === "BOOLEAN") {
+            return "boolean";
+        } else if (sqlType === "DATE") {
+            return "date";
+        } else if (sqlType === "ARRAY" || sqlType === "VARIANT") {
+            return "JSON";
+        } else if (sqlType === "REAL" || sqlType.startsWith("FLOAT") || sqlType.startsWith("DOUBLE")) {
+            return "number";
+        } else if (sqlType === "STRING" || sqlType === "TEXT" || sqlType === "TIME" ||
+            sqlType.startsWith("CHAR") || sqlType.endsWith("CHAR")) {
+            return "string";
+        } else if (sqlType.includes("TIMESTAMP")) {
+            return "SfDate";
+        } else {
+            throw new Error("The SQL type '" + sqlType + "' is not in the data type mapping document.")
+        }
     }
 
     /**
      * This method returns the name of the specified column.
      *
-     * @param {Number} col
+     * @param {Number} colIdx
      *
      * @return {String} The JavaScript data type of the column.
      */
@@ -168,7 +185,7 @@ class Statement {
      *
      * @return {Boolean}
      */
-    isColumnArray(colIdx) { // boolean
+    isColumnArray(colIdx) {
         return this._getSDKColumnByIndex(colIdx).isArray();
     }
 
@@ -179,7 +196,7 @@ class Statement {
      *
      * @return {Boolean}
      */
-    isColumnBinary(colIdx) { // boolean
+    isColumnBinary(colIdx) {
         return this._getSDKColumnByIndex(colIdx).isBinary();
     }
 
@@ -190,7 +207,7 @@ class Statement {
      *
      * @return {Boolean}
      */
-    isColumnBoolean(colIdx) { // boolean
+    isColumnBoolean(colIdx) {
         return this._getSDKColumnByIndex(colIdx).isBoolean();
     }
 
@@ -201,7 +218,7 @@ class Statement {
      *
      * @return {Boolean}
      */
-    isColumnDate(colIdx) { // boolean
+    isColumnDate(colIdx) {
         return this._getSDKColumnByIndex(colIdx).isDate();
     }
 
@@ -212,7 +229,7 @@ class Statement {
      *
      * @return {Boolean}
      */
-    isColumnNumber(colIdx) { // boolean
+    isColumnNumber(colIdx) {
         return this._getSDKColumnByIndex(colIdx).isNumber();
     }
 
@@ -223,7 +240,7 @@ class Statement {
      *
      * @return {Boolean}
      */
-    isColumnObject(colIdx) { // boolean
+    isColumnObject(colIdx) {
         return this._getSDKColumnByIndex(colIdx).isObject();
     }
 
@@ -234,7 +251,7 @@ class Statement {
      *
      * @return {Boolean}
      */
-    isColumnTime(colIdx) { // boolean
+    isColumnTime(colIdx) {
         return this._getSDKColumnByIndex(colIdx).isTime();
     }
 
@@ -251,7 +268,7 @@ class Statement {
      * false for all other data types, including other date and time data types
      * (DATE, TIME, or DATETIME).
      */
-    isColumnTimestamp(colIdx) { // boolean
+    isColumnTimestamp(colIdx) {
         return this._getSDKColumnByIndex(colIdx).isTimestamp();
     }
 
@@ -263,9 +280,9 @@ class Statement {
      * @return {Boolean} true if the column data type is VARIANT (for semi-structured data);
      * false for all other data types.
      */
-    isColumnVariant(colIdx) { // boolean
+    isColumnVariant(colIdx) {
         return this._getSDKColumnByIndex(colIdx).isVariant();
     }
 }
 
-exports.Statement = Statement;
+export default Statement;

@@ -1,6 +1,6 @@
-const { sdk } = require("snowflake-sdk");
-const Statement = require("./statement");
-const ResultSet = require("./resultset");
+import sdk from 'snowflake-sdk';
+import Statement from './statement';
+import ResultSet from './resultset';
 
 class Snowflake {
 
@@ -38,4 +38,4 @@ class Snowflake {
     }
 }
 
-exports.Snowflake = Snowflake;
+export default Snowflake;
